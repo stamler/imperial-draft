@@ -1,0 +1,42 @@
+<div>
+  <!-- The Users mgmt UI is driven by Profiles rather than the auth users. Prior to 
+  performing actions the user should perform an update which will ensure the
+  profiles reflect the correct claims in firebase auth. The actual changes will 
+  be performed through a cloud function (multiple calls to chclaim) then an 
+  update will be called again (possibly only on the updated items based on 
+  update time?)-->
+  <button>Bulk Import</button>
+  <button>Update (dump) Profiles</button>
+  <div><< Page control >></div>
+  
+  <div>With Selected: 
+    <button>Add claim(s)...</button>
+    <button>Remove claim(s)...</button>
+  </div>
+
+  <input type="textbox" placeholder="search..."/>
+  <table>
+    <tr>
+      <th></th>
+      <th>user</th>
+      <th>claims</th>
+    </tr>
+    <tr v-for="profile in profiles">
+      <td><input type="checkbox" name="user.uid" value="user.uid"/></td>
+      <td>{{ profile.displayName }}</td>
+      <td>{{ profile.email }}</td>
+      <td>{{ profile.customClaims }}</td>
+      <td v-if="profile.onPremId">{{ profile.onPremId }}</td>
+      <td v-else><button>Write AzureID to User doc</button></td>
+      <!-- There are two IDs per user and we manually link them. 
+      The first is the Azure ObjectID. This is the UID in Auth users
+      and also the key in Profiles. 
+      The second is the userSourceAnchor for Azure sync, called
+      mS-DS-ConsistencyGuid in on-prem Active Directory. It is stored
+      in the Users document under the userSourceAnchor key. The above button
+      attempts to match the auth user/profile user to a Users user then if it
+      finds a single match it writes the Azure ObjectID to the Users doc -->
+    </tr>
+    
+  </table>
+</div>
